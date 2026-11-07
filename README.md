@@ -55,6 +55,13 @@ placed for another theme stay where they are. A new site gets the
 copyright block in *Footer bottom line*. A block's title in the sidebar
 is shown as a command: `> title`.
 
+## Fonts
+
+JetBrains Mono for the prompt, headings, dates and code, Source Sans 3
+for the text, both with Latin, Cyrillic and Greek. They come with the
+theme (`static/fonts`, SIL Open Font License 1.1) and the site serves
+them: no requests to other servers.
+
 ## Translations
 
 The theme's own strings: English, Russian, German and Spanish
