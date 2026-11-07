@@ -1,0 +1,32 @@
+{
+  "contexts": {},
+  "strings": {
+    "A technical blog in a terminal - a prompt in the header, monospace headings and dates, code blocks with highlighting and a copy button, the contents of a long text, colour palettes, a dark and a light scheme.": "Un blog técnico en una terminal - un prompt en la cabecera, títulos y fechas en monoespaciado, bloques de código resaltados con un botón para copiar, el índice de un texto largo, paletas de colores, un esquema oscuro y uno claro.",
+    "Amber": "Ámbar",
+    "As on the visitor's device": "Como en el dispositivo del visitante",
+    "Colour scheme by default": "Esquema de color por defecto",
+    "Contents": "Índice",
+    "Dark": "Oscuro",
+    "Green phosphor": "Fósforo verde",
+    "Ice": "Hielo",
+    "Light": "Claro",
+    "Logging in and registration in the header": "Acceso y registro en la cabecera",
+    "Monospace": "Monoespaciada",
+    "Palette": "Paleta",
+    "Proportional": "Proporcional",
+    "Rose": "Rosa",
+    "Switch the colour scheme": "Cambiar el esquema de color",
+    "Terminal": "Terminal",
+    "The contents of a text with three headings or more": "Índice de un texto con tres títulos o más",
+    "The header's prompt (the site's name when empty)": "Prompt de la cabecera (vacío - el nombre del sitio)",
+    "The text's font": "Fuente del texto",
+    "blog": "blog",
+    "contents": "índice",
+    "copied": "copiado",
+    "copy": "copiar",
+    "dark": "oscuro",
+    "light": "claro",
+    "monospace": "monoespaciado",
+    "responsive": "adaptable"
+  }
+}

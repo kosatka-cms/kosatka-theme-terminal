@@ -1,0 +1,23 @@
+{{/* The terminal footer: a line above it, the footer region (a menu in
+     one row), then the footer_bottom region in a row (the copyright
+     block, the theme's - theme.yaml "blocks" - on the left, the region's
+     other blocks after it); the engine's scripts, the theme's
+     terminal.js (code blocks, the contents) and the document end
+     (html_scripts, html_end). */}}
+{{define "footer"}}
+<footer class="site-footer t-footer">
+    <div class="container">
+        {{if regionHasBlocks "footer" .}}
+        <div class="site-footer-region">
+            {{template "region_blocks" (dict "Region" (region "footer") "Ctx" .)}}
+        </div>
+        {{end}}
+        <div class="t-footer-row">
+            {{template "region_blocks" (dict "Region" (region "footer_bottom") "Ctx" .)}}
+        </div>
+    </div>
+</footer>
+{{template "html_scripts" .}}
+<script src="{{ themeJS "terminal" }}" defer></script>
+{{template "html_end" .}}
+{{end}}

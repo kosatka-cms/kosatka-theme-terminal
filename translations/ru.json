@@ -1,0 +1,32 @@
+{
+  "contexts": {},
+  "strings": {
+    "A technical blog in a terminal - a prompt in the header, monospace headings and dates, code blocks with highlighting and a copy button, the contents of a long text, colour palettes, a dark and a light scheme.": "Технический блог в терминале - приглашение командной строки в шапке, моноширинные заголовки и даты, блоки кода с подсветкой и кнопкой копирования, оглавление длинного текста, цветовые палитры, тёмная и светлая схемы.",
+    "Amber": "Янтарная",
+    "As on the visitor's device": "Как на устройстве посетителя",
+    "Colour scheme by default": "Цветовая схема по умолчанию",
+    "Contents": "Оглавление",
+    "Dark": "Тёмная",
+    "Green phosphor": "Зелёный люминофор",
+    "Ice": "Лёд",
+    "Light": "Светлая",
+    "Logging in and registration in the header": "Вход и регистрация в шапке",
+    "Monospace": "Моноширинный",
+    "Palette": "Палитра",
+    "Proportional": "Пропорциональный",
+    "Rose": "Роза",
+    "Switch the colour scheme": "Переключить цветовую схему",
+    "Terminal": "Терминал",
+    "The contents of a text with three headings or more": "Оглавление текста с тремя заголовками и больше",
+    "The header's prompt (the site's name when empty)": "Приглашение в шапке (пусто - название сайта)",
+    "The text's font": "Шрифт текста",
+    "blog": "блог",
+    "contents": "оглавление",
+    "copied": "скопировано",
+    "copy": "копировать",
+    "dark": "тёмная",
+    "light": "светлая",
+    "monospace": "моноширинная",
+    "responsive": "адаптивная"
+  }
+}

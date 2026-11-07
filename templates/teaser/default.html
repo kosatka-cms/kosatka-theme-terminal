@@ -1,0 +1,20 @@
+{{/* The terminal teaser (a term's page and other lists of teasers;
+     entity.TeaserItem), a row like the Views' lists: the type's first
+     image field in its list style (a thumbnail on the left where the
+     list is wide, terminal.css), the date in monospace, the title, the
+     start of the body text, the terms with public pages as "#term"
+     links. */}}
+{{define "teaser_default"}}
+{{$it := .}}
+{{$title := or $it.AltTitle $it.Node.Title}}
+{{$href := $it.Node.URL}}
+<article class="node node-teaser">
+    {{with $it.MainImage}}{{if .URI}}
+    <a href="{{$href}}" class="node-teaser-image">{{img (styledPicture . $it.ImageStyle) (or .Alt $title)}}</a>
+    {{end}}{{end}}
+    <div class="t-teaser-meta"><time datetime="{{$it.Node.CreatedAt.Format "2006-01-02T15:04:05Z07:00"}}">{{date $it.Node.CreatedAt ""}}</time></div>
+    <h3 class="node-teaser-title"><a href="{{$href}}"{{with $it.Node.Langcode}} lang="{{.}}"{{end}}>{{$title}}</a>{{with otherLanguage $it.Node.Langcode}} <span class="badge text-bg-secondary node-teaser-language">{{.}}</span>{{end}}</h3>
+    {{with plainPreview $it.Body 300}}<p class="node-teaser-text">{{.}}</p>{{end}}
+    {{if $it.Terms}}<div class="t-tags">{{range $it.Terms}}{{range .}}{{if .HasPublicPage}}<a href="{{localURL (print "/" .Slug)}}">{{termName .}}</a> {{end}}{{end}}{{end}}</div>{{end}}
+</article>
+{{end}}

@@ -1,0 +1,32 @@
+{
+  "contexts": {},
+  "strings": {
+    "A technical blog in a terminal - a prompt in the header, monospace headings and dates, code blocks with highlighting and a copy button, the contents of a long text, colour palettes, a dark and a light scheme.": "Ein technischer Blog im Terminal - eine Eingabeaufforderung in der Kopfzeile, Überschriften und Daten in Festbreitenschrift, Codeblöcke mit Hervorhebung und einer Kopiertaste, das Inhaltsverzeichnis eines langen Textes, Farbpaletten, ein dunkles und ein helles Schema.",
+    "Amber": "Bernstein",
+    "As on the visitor's device": "Wie auf dem Gerät des Besuchers",
+    "Colour scheme by default": "Standard-Farbschema",
+    "Contents": "Inhalt",
+    "Dark": "Dunkel",
+    "Green phosphor": "Grüner Phosphor",
+    "Ice": "Eis",
+    "Light": "Hell",
+    "Logging in and registration in the header": "Anmeldung und Registrierung in der Kopfzeile",
+    "Monospace": "Festbreite",
+    "Palette": "Palette",
+    "Proportional": "Proportional",
+    "Rose": "Rose",
+    "Switch the colour scheme": "Farbschema wechseln",
+    "Terminal": "Terminal",
+    "The contents of a text with three headings or more": "Inhaltsverzeichnis eines Textes mit drei oder mehr Überschriften",
+    "The header's prompt (the site's name when empty)": "Eingabeaufforderung in der Kopfzeile (leer - der Name der Website)",
+    "The text's font": "Schrift des Textes",
+    "blog": "Blog",
+    "contents": "inhalt",
+    "copied": "kopiert",
+    "copy": "kopieren",
+    "dark": "dunkel",
+    "light": "hell",
+    "monospace": "Festbreite",
+    "responsive": "responsiv"
+  }
+}
