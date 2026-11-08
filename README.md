@@ -9,7 +9,28 @@ scheme.
 
 ![Terminal](https://raw.githubusercontent.com/kosatka-cms/kosatka-theme-terminal/main/static/screenshot.jpg)
 
+## Screenshots
+
+The [demo site](#a-demo-site); a picture opens the whole page.
+
+<table>
+  <tr>
+    <td width="50%"><a href="docs/screenshots/home.webp"><img src="docs/screenshots/home-preview.webp" alt="The front page"></a><br>The front page: the pinned post across, the others with a thumbnail</td>
+    <td width="50%"><a href="docs/screenshots/post.webp"><img src="docs/screenshots/post-preview.webp" alt="A post"></a><br>A post: code with its language and a copy button, the contents beside</td>
+  </tr>
+  <tr>
+    <td><a href="docs/screenshots/topic.webp"><img src="docs/screenshots/topic-preview.webp" alt="A term's page"></a><br>A term's page</td>
+    <td><a href="docs/screenshots/home-light.webp"><img src="docs/screenshots/home-light-preview.webp" alt="The front page in the light scheme"></a><br>The light scheme</td>
+  </tr>
+  <tr>
+    <td><a href="docs/screenshots/phone-home.webp"><img src="docs/screenshots/phone-home-preview.webp" alt="The front page on a phone" width="48%"></a> <a href="docs/screenshots/phone-post.webp"><img src="docs/screenshots/phone-post-preview.webp" alt="A post on a phone, light" width="48%"></a><br>On a phone: the front page, a post in the light scheme</td>
+    <td></td>
+  </tr>
+</table>
+
 ## Install
+
+Kosatka 0.1.6 or newer.
 
 ```bash
 app theme add https://github.com/kosatka-cms/kosatka-theme-terminal
@@ -17,6 +38,32 @@ app theme add https://github.com/kosatka-cms/kosatka-theme-terminal
 
 Then commit `themes/` and choose *Terminal* on *Appearance*. See
 [Distributing a theme](https://kosatka-cms.github.io/kosatka/themes/distribute/).
+
+More themes for Kosatka: the [themes catalog](https://github.com/kosatka-cms/themes).
+
+## A demo site
+
+The theme comes with a demo site in English (`demo/en.yaml`):
+"buildlog", the engineering notes of a small software team - posts with
+code in Go, SQL, shell, Python and more, their pictures, topics and
+tags, comments, a sidebar of commands. Everything in it is made up - the
+team, the people and the posts; its pictures are abstract, drawn for it,
+and come with the theme (`demo/images`). On a new site:
+
+```bash
+app install -site-name "buildlog" -admin-name admin -admin-email admin@example.com \
+  -language en -demo-set terminal
+```
+
+Everything the demo creates is ordinary content, Views and blocks,
+changed or deleted in the admin. The posts' code keeps its language in a
+`class`, which a new site's *Basic HTML* format doesn't keep: before
+editing such a post, let a text format keep `pre`, `code` and `class`
+(see [Code](#code)).
+
+The screenshots above are of it: `python3 scripts/screenshots.py
+http://127.0.0.1:8080` (the demo site's address) takes them again into
+`docs/screenshots/` - Python 3 and Google Chrome are all it needs.
 
 ## Settings
 
@@ -52,7 +99,9 @@ attribute for the language (*Configuration → Text formats*).
 The engine's regions - *Header*, *Sidebar*, *Content top*, *Content
 bottom*, *Inside content*, *Footer*, *Footer bottom line* - so blocks
 placed for another theme stay where they are. A new site gets the
-copyright block in *Footer bottom line*. A block's title in the sidebar
+copyright block and a "Powered by Kosatka CMS" block in *Footer bottom
+line*; both are ordinary blocks to change or remove on *Blocks*. A
+block's title in the sidebar
 is shown as a command: `> title`.
 
 ## Fonts

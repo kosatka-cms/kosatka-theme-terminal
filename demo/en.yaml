@@ -1,0 +1,382 @@
+# The terminal theme's demo site (app install -demo-set terminal):
+# "buildlog", the engineering notes of a small software team - Go,
+# databases, operations, tools - with code in every other post. The
+# pinned post leads the front page, the topics are in the menu, the
+# sidebar's blocks are commands. Everything here is made up - the team,
+# the people and the posts; the pictures are the theme's own
+# (demo/images), abstract, drawn for it. The code is the posts' own.
+#
+# The code blocks keep their language in a class (<pre><code
+# class="language-go">); the site's Basic HTML format doesn't keep pre,
+# code or class - a format that does is set up on Text formats before
+# such a post is edited and saved.
+site:
+  slogan: Notes from a small software team
+  front_page_view: home
+  main_menu: main
+  footer_menu: footer
+
+users:
+  - kernel_kat
+  - null_pointer
+  - tabs_not_spaces
+  - green_build
+  - dev_dmitri
+  - retry_later
+
+vocabularies:
+  - name: topics
+    label: Topics
+    path: topics
+    terms:
+      - {name: Go, description: "Services, tools and the standard library."}
+      - {name: Databases, description: "Queries, indexes and the occasional migration at night."}
+      - {name: Ops, description: "Builds, images, deploys and the logs after them."}
+      - {name: Tooling, description: "The small programs that make the big ones easier."}
+      - {name: Notes, description: "Everything that isn't code but ends up in it."}
+  - name: tags
+    label: Tags
+    path: tags
+    terms: [go, postgres, sql, docker, shell, git, yaml, make, testing, http, performance, on-call, python, javascript, ci]
+
+field_storages:
+  - {name: field_topic, type: taxonomy, vocabulary: topics}
+  - {name: field_tags, type: taxonomy, vocabulary: tags, multiple: true}
+
+content_types:
+  - name: post
+    label: Post
+    description: A post of the team's notes - a text, code in it, a cover picture.
+    path: posts
+    comments: open
+    show_submitted: true
+    show_view_count: true
+    promote: true
+    fields:
+      - {storage: field_image, label: Cover, show_on_detail: true, detail_image_style: article_wide, list_image_style: article_card, sort_order: 0, display_order: 0}
+      - {storage: field_topic, label: Topic, widget: select, show_on_detail: true, sort_order: 10, display_order: 5}
+      - {storage: field_body, label: Text, widget: textarea, text_formats: [basic_html, plain_text], show_on_detail: true, renders_in_body: true, sort_order: 20, display_order: 10}
+      - {storage: field_tags, label: Tags, widget: autocomplete, show_on_detail: true, show_label: true, sort_order: 30, display_order: 20}
+
+nodes:
+  - key: graceful_shutdown
+    type: post
+    title: Graceful shutdown for a Go HTTP server
+    author: kernel_kat
+    sticky: true
+    ago: 1d
+    views: 2310
+    fields:
+      field_image: {file: images/graceful-shutdown.webp}
+      field_topic: Go
+      field_tags: [go, http, testing]
+      field_body: |
+        <p>Every deploy restarts the service, and every restart used to cut a few requests in half. The fix is twenty lines of Go and one habit: when the process is asked to stop, it stops taking new work and finishes the work it has.</p>
+        <h2>Catching the signal</h2>
+        <p>The orchestrator sends <code>SIGTERM</code> and waits. A context that is cancelled by the signal is all the server needs to know about it:</p>
+        <pre><code class="language-go">ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+        defer stop()
+
+        srv := &amp;http.Server{Addr: ":8080", Handler: routes()}
+        go func() {
+            if err := srv.ListenAndServe(); err != nil &amp;&amp; !errors.Is(err, http.ErrServerClosed) {
+                log.Fatalf("listen: %v", err)
+            }
+        }()
+
+        &lt;-ctx.Done() // the signal came
+        </code></pre>
+        <h2>Draining the requests</h2>
+        <p><code>Shutdown</code> closes the listener at once and then waits for the requests in flight. It needs a deadline of its own - shorter than the one the orchestrator gives before it kills the process:</p>
+        <pre><code class="language-go">shutdownCtx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+        defer cancel()
+        if err := srv.Shutdown(shutdownCtx); err != nil {
+            log.Printf("shutdown: %v", err) // the deadline passed: some requests were cut
+        }
+        </code></pre>
+        <h2>The things that aren't requests</h2>
+        <p>Background workers, a queue consumer, a ticker that flushes metrics: they all get the same context and return when it is done. The order matters - stop taking work first, flush last.</p>
+        <h2>Testing it</h2>
+        <p>Start the server, send a slow request, send the signal while it runs and check that the response arrives whole:</p>
+        <pre><code class="language-shell">curl -s localhost:8080/slow &amp;
+        sleep 0.5
+        kill -TERM "$(pgrep -f ./server)"
+        wait # the response is printed, the server has exited
+        </code></pre>
+        <p>Twenty lines, and the deploys went quiet.</p>
+    comments:
+      - author: green_build
+        body: The order - stop taking work first, flush last - took us a production incident to learn.
+        replies:
+          - author: kernel_kat
+            body: Same here. That's why it's a heading.
+      - author: dev_dmitri
+        body: Fifteen seconds against the orchestrator's thirty - good default.
+  - key: makefile
+    type: post
+    title: A Makefile is still a fine task runner
+    author: tabs_not_spaces
+    ago: 3d
+    views: 1480
+    fields:
+      field_image: {file: images/makefile.webp}
+      field_topic: Tooling
+      field_tags: [make, ci, testing]
+      field_body: |
+        <p>Every project grows a list of commands nobody remembers: run the tests with the race detector, lint, build the docs, regenerate the mocks. A Makefile writes them down in one place, and CI runs exactly the same lines as you do on your laptop. New people read it on their first day and know how the project is worked on.</p>
+        <pre><code class="language-makefile">.PHONY: test lint docs
+
+        test:
+        	go test -race ./...
+
+        lint:
+        	golangci-lint run
+
+        docs:
+        	./scripts/docs.sh
+        </code></pre>
+        <p>It is not a build system here, only a table of contents for the project's commands. That is enough.</p>
+    comments:
+      - author: retry_later
+        body: The tabs, though.
+        replies:
+          - author: tabs_not_spaces
+            body: Look at my name.
+  - key: slow_query
+    type: post
+    title: Finding the slow query in Postgres
+    author: null_pointer
+    ago: 5d
+    views: 1920
+    fields:
+      field_image: {file: images/slow-query.webp}
+      field_topic: Databases
+      field_tags: [postgres, sql, performance]
+      field_body: |
+        <p>The page was slow, the server wasn't busy and the database said nothing about it. It does, if you ask the right view: the statistics extension keeps every query the database has run, with how many times it ran and how long it took on average. Sorted by the average, the culprit is usually on the first line.</p>
+        <pre><code class="language-sql">SELECT query, calls, round(mean_exec_time::numeric, 1) AS mean_ms
+        FROM pg_stat_statements
+        ORDER BY mean_exec_time DESC
+        LIMIT 5;
+        </code></pre>
+        <p>The first line was a search that read the whole table to find twenty rows. <code>EXPLAIN ANALYZE</code> showed the sequential scan, an index on the column showed it the door.</p>
+  - key: small_images
+    type: post
+    title: Small Docker images for Go services
+    author: green_build
+    ago: 8d
+    views: 1360
+    fields:
+      field_image: {file: images/small-images.webp}
+      field_topic: Ops
+      field_tags: [docker, go, ci]
+      field_body: |
+        <p>A Go binary needs almost nothing to run: no interpreter, no libraries, often not even a shell. So the image shouldn't carry a compiler and a package manager along with it. Less in the image means less to download, less to scan and less to patch. Build in one stage, then copy the binary into an image that is nearly empty:</p>
+        <pre><code class="language-dockerfile">FROM golang:1.23 AS build
+        WORKDIR /src
+        COPY . .
+        RUN CGO_ENABLED=0 go build -o /out/app ./cmd/app
+
+        FROM gcr.io/distroless/static
+        COPY --from=build /out/app /app
+        ENTRYPOINT ["/app"]
+        </code></pre>
+        <p>The image went from eight hundred megabytes to twelve, and the deploys from a minute to a few seconds.</p>
+  - key: backoff
+    type: post
+    title: Retry with backoff, without a library
+    author: retry_later
+    ago: 11d
+    views: 1050
+    fields:
+      field_image: {file: images/backoff.webp}
+      field_topic: Tooling
+      field_tags: [python, http]
+      field_body: |
+        <p>When a service is overloaded, retrying at once only makes it worse: every client hammers it again in the same instant. Wait instead, and wait longer each time - with a little randomness, so a hundred clients don't all come back in the same second. It fits in ten lines, so we stopped adding a dependency for it:</p>
+        <pre><code class="language-python">import random
+        import time
+
+
+        def retry(call, attempts=5, base=0.2):
+            for attempt in range(attempts):
+                try:
+                    return call()
+                except ConnectionError:
+                    if attempt == attempts - 1:
+                        raise
+                    time.sleep(base * 2 ** attempt + random.uniform(0, base))
+        </code></pre>
+    comments:
+      - author: null_pointer
+        body: The jitter is the part everybody forgets.
+  - key: reading_a_diff
+    type: post
+    title: Reading a diff like a reviewer
+    author: dev_dmitri
+    ago: 14d
+    views: 980
+    fields:
+      field_image: {file: images/reading-a-diff.webp}
+      field_topic: Notes
+      field_tags: [git, testing]
+      field_body: |
+        <p>Read what was removed first. The added lines say what the author wanted the code to do; the removed ones say what it did before, and that is exactly what someone, somewhere, already depends on. The new behaviour is the author's question; the old one is the reviewer's. A small one from last week's review:</p>
+        <pre><code class="language-diff">-	timeout := 5 * time.Second
+        +	timeout := cfg.Timeout
+        +	if timeout == 0 {
+        +		timeout = 5 * time.Second
+        +	}
+        </code></pre>
+        <p>Here the default survived the change. The question for the review: does anything set the timeout to zero on purpose?</p>
+  - key: yaml_surprises
+    type: post
+    title: YAML surprises we keep meeting
+    author: tabs_not_spaces
+    ago: 17d
+    views: 1270
+    fields:
+      field_image: {file: images/yaml-surprises.webp}
+      field_topic: Ops
+      field_tags: [yaml, ci]
+      field_body: |
+        <p>YAML reads well and parses in surprising ways. Every team that keeps its configuration in it collects a few of these, usually at the worst possible moment. None of them is a parser's bug - the format allows each one, and the parser does exactly what it was told. Here are three lines from our own configs, and each one was a bug report once:</p>
+        <pre><code class="language-yaml">countries: [no, se, dk]   # an older parser reads "no" as false
+        version: 1.10             # a number: 1.1
+        port: "8080"              # a string, on purpose
+        </code></pre>
+        <p>The rule we settled on: quote every value that isn't obviously a number or a boolean.</p>
+  - key: log_one_liners
+    type: post
+    title: Shell one-liners for a log file
+    author: kernel_kat
+    ago: 20d
+    views: 1640
+    fields:
+      field_image: {file: images/log-one-liners.webp}
+      field_topic: Ops
+      field_tags: [shell, on-call]
+      field_body: |
+        <p>Before reaching for a dashboard, try the log file on the box: grep, sort, uniq and awk answer most of the questions an incident asks, and they are already installed everywhere, even on the smallest image. They also work over a slow connection at three in the morning, which a dashboard often doesn't. The ones we type often enough to keep them in this post:</p>
+        <pre><code class="language-shell"># The ten most frequent errors
+        grep -o 'error="[^"]*"' app.log | sort | uniq -c | sort -rn | head
+
+        # Requests a minute (the time in the fourth field)
+        awk '{ print substr($4, 2, 17) }' access.log | uniq -c
+
+        # Follow the log, only the slow requests
+        tail -f access.log | awk '$NF &gt; 1.0'
+        </code></pre>
+  - key: feature_flags
+    type: post
+    title: Feature flags as plain config
+    author: null_pointer
+    ago: 24d
+    views: 870
+    fields:
+      field_image: {file: images/feature-flags.webp}
+      field_topic: Tooling
+      field_tags: [javascript, testing]
+      field_body: |
+        <p>We thought we needed a service for feature flags, with a dashboard and an SDK. In the end we needed a file in the repository and one small function that reads it, and that has been enough for two years and a dozen launches. A flag is turned on with a commit, so the history says who did it and why. The file:</p>
+        <pre><code class="language-json">{
+          "flags": {
+            "new_search": { "enabled": true, "percent": 10 },
+            "dark_mode": { "enabled": false }
+          }
+        }
+        </code></pre>
+        <p>And the check - the same user always lands on the same side:</p>
+        <pre><code class="language-javascript">const isOn = (flag, userId) =&gt;
+          flag.enabled &amp;&amp; userId % 100 &lt; (flag.percent ?? 100);
+        </code></pre>
+  - key: on_call_week
+    type: post
+    title: "A week on call: what we wrote down"
+    author: green_build
+    ago: 28d
+    views: 760
+    fields:
+      field_image: {file: images/on-call-week.webp}
+      field_topic: Notes
+      field_tags: [on-call]
+      field_body: |
+        <p>Four pages, one of them real. What we changed afterwards:</p>
+        <ul>
+        <li>an alert that nobody acts on is deleted, not muted;</li>
+        <li>every alert links to the page that says what to do;</li>
+        <li>the person on call writes one line a day, even "quiet".</li>
+        </ul>
+        <p>The real page was at 03:12, and the page that said what to do was right.</p>
+
+  - key: about
+    type: page
+    title: About
+    path: about
+    fields:
+      field_body: |
+        <p>buildlog is a demo site of the Kosatka engine and its Terminal theme: the engineering notes of a small software team. Everything here - the team, the people and the posts - is made up; the pictures are drawn for it.</p>
+        <p>The posts are ordinary content, changed and deleted in the admin; the topics and the tags are terms, the sidebar is blocks.</p>
+
+views:
+  - name: home
+    label: Posts on the front page
+    display_type: block
+    style: list
+    pager: true
+    page_size: 8
+    fields:
+      - {storage: field_image, image_style: article_card, link_to: content}
+      - {storage: field_topic, tag_format: badges}
+      - {builtin: title, link_to: content}
+      - {builtin: author, show_label: true}
+      - {builtin: created_at, date_format: medium}
+      - {storage: field_body, trim_length: 220}
+      - {storage: field_tags, tag_format: linked, show_label: true}
+      - {builtin: view_count, show_label: true}
+      - {builtin: comment_count, show_label: true}
+    filters:
+      - {builtin: status, operator: eq, value: "1"}
+      - {builtin: promote, operator: eq, value: "1"}
+      - {builtin: on_moderation, operator: eq, value: "0"}
+    sorts:
+      - {builtin: sticky, direction: desc}
+      - {builtin: created_at, direction: desc}
+  - name: popular
+    label: Popular
+    display_type: block
+    style: list
+    page_size: 5
+    fields:
+      - {builtin: title, link_to: content}
+      - {builtin: view_count, show_label: true}
+    filters:
+      - {builtin: content_type, operator: in, value: post}
+      - {builtin: status, operator: eq, value: "1"}
+    sorts:
+      - {builtin: views, direction: desc}
+
+blocks:
+  - {region: sidebar, plugin: search_form, title: Search, weight: 1}
+  - region: sidebar
+    weight: 2
+    title: whoami
+    show_title: true
+    body: <p>A small software team writing down what it learns - Go, databases, deploys and the tools in between.</p><p><a href="/about">More about us</a></p>
+  - {region: sidebar, view: popular, title: Popular, show_title: true, weight: 3}
+  - {region: sidebar, plugin: last_comments, title: Latest comments, weight: 4}
+  - {region: sidebar, plugin: tag_cloud, vocabulary: tags, title: Tags, show_title: true, weight: 5, config: {count: "15"}}
+
+menus:
+  - name: main
+    links:
+      - {title: Go, term: topics/Go}
+      - {title: Databases, term: topics/Databases}
+      - {title: Ops, term: topics/Ops}
+      - {title: Tooling, term: topics/Tooling}
+      - {title: Notes, term: topics/Notes}
+  - name: footer
+    label: Footer
+    region: footer
+    links:
+      - {title: About, node: about}

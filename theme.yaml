@@ -15,8 +15,8 @@ author: Kosatka
 license: MIT
 # version - this release (the tag vX.Y.Z without its "v"); min_version -
 # the oldest engine release the theme works with.
-version: 0.1.1
-min_version: 0.1.0
+version: 0.1.2
+min_version: 0.1.6
 homepage: https://github.com/kosatka-cms/kosatka-theme-terminal
 tags: [dark, light, monospace, blog, responsive]
 screenshot: screenshot.jpg
@@ -47,6 +47,11 @@ regions:
 blocks:
   - plugin: copyright
     region: footer_bottom
+  - title: Powered by Kosatka CMS
+    region: footer_bottom
+    weight: 10
+    body: |
+      <p>Powered by <a href="https://github.com/kosatka-cms/kosatka" target="_blank" rel="noopener">Kosatka CMS</a></p>
 # settings - the theme's options on the Appearance page
 # (entity.ThemeSetting). The palette and the font are attributes of
 # <html> (partials/theme_head.html), terminal.css has their colours.

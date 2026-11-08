@@ -594,6 +594,20 @@ h1, h2, h3, h4, h5, h6 {
     text-decoration: underline;
 }
 
+/* A term's description on its page, between the title and the list: a
+   comment line, as the header's slogan. */
+.term-description {
+    max-width: 44rem;
+    margin-bottom: 1.75rem;
+    color: var(--t-muted);
+    font-family: var(--t-font-mono);
+    font-size: .9375rem;
+}
+
+.term-description::before {
+    content: "# ";
+}
+
 /* The separator as a path's slash (its own "»" kept for the screen
    readers, hidden on the screen). */
 .breadcrumb .separator {
