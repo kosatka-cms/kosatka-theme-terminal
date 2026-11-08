@@ -30,7 +30,7 @@ The [demo site](#a-demo-site); a picture opens the whole page.
 
 ## Install
 
-Kosatka 0.1.6 or newer.
+Kosatka 0.1.7 or newer.
 
 ```bash
 app theme add https://github.com/kosatka-cms/kosatka-theme-terminal
@@ -56,10 +56,9 @@ app install -site-name "buildlog" -admin-name admin -admin-email admin@example.c
 ```
 
 Everything the demo creates is ordinary content, Views and blocks,
-changed or deleted in the admin. The posts' code keeps its language in a
-`class`, which a new site's *Basic HTML* format doesn't keep: before
-editing such a post, let a text format keep `pre`, `code` and `class`
-(see [Code](#code)).
+changed or deleted in the admin. The posts are in a text format of the
+demo's own, *HTML with code*: it keeps `pre`, `code` and their `class`
+(see [Code](#code)), and its editor has a code block button.
 
 The screenshots above are of it: `python3 scripts/screenshots.py
 http://127.0.0.1:8080` (the demo site's address) takes them again into

@@ -5,16 +5,25 @@
 # sidebar's blocks are commands. Everything here is made up - the team,
 # the people and the posts; the pictures are the theme's own
 # (demo/images), abstract, drawn for it. The code is the posts' own.
-#
-# The code blocks keep their language in a class (<pre><code
-# class="language-go">); the site's Basic HTML format doesn't keep pre,
-# code or class - a format that does is set up on Text formats before
-# such a post is edited and saved.
+# The posts are in a text format of the set's own, HTML with code: it
+# keeps pre, code and their class (<pre><code class="language-go">, the
+# language the theme highlights), and its editor has a code block button.
 site:
   slogan: Notes from a small software team
   front_page_view: home
   main_menu: main
   footer_menu: footer
+
+text_formats:
+  - name: code_html
+    label: HTML with code
+    # Before Basic HTML (0): a post's text is saved in it.
+    weight: -1
+    allowed_tags: p br strong em u s a ul ol li blockquote h2 h3 h4 img pre code
+    allow_class: true
+    rich_editor: true
+    plugins: link image code lists codesample
+    toolbar: undo redo | blocks | bold italic | bullist numlist | link image | codesample | code
 
 users:
   - kernel_kat
@@ -55,7 +64,7 @@ content_types:
     fields:
       - {storage: field_image, label: Cover, show_on_detail: true, detail_image_style: article_wide, list_image_style: article_card, sort_order: 0, display_order: 0}
       - {storage: field_topic, label: Topic, widget: select, show_on_detail: true, sort_order: 10, display_order: 5}
-      - {storage: field_body, label: Text, widget: textarea, text_formats: [basic_html, plain_text], show_on_detail: true, renders_in_body: true, sort_order: 20, display_order: 10}
+      - {storage: field_body, label: Text, widget: textarea, text_formats: [code_html, basic_html, plain_text], show_on_detail: true, renders_in_body: true, sort_order: 20, display_order: 10}
       - {storage: field_tags, label: Tags, widget: autocomplete, show_on_detail: true, show_label: true, sort_order: 30, display_order: 20}
 
 nodes:
@@ -364,7 +373,7 @@ blocks:
     show_title: true
     body: <p>A small software team writing down what it learns - Go, databases, deploys and the tools in between.</p><p><a href="/about">More about us</a></p>
   - {region: sidebar, view: popular, title: Popular, show_title: true, weight: 3}
-  - {region: sidebar, plugin: last_comments, title: Latest comments, weight: 4}
+  - {region: sidebar, plugin: last_comments, title: Recent comments, show_title: true, weight: 4}
   - {region: sidebar, plugin: tag_cloud, vocabulary: tags, title: Tags, show_title: true, weight: 5, config: {count: "15"}}
 
 menus:
