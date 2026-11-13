@@ -15,7 +15,7 @@ author: Kosatka
 license: MIT
 # version - this release (the tag vX.Y.Z without its "v"); min_version -
 # the oldest engine release the theme works with.
-version: 0.1.3
+version: 0.1.4
 min_version: 0.1.7
 homepage: https://github.com/kosatka-cms/kosatka-theme-terminal
 tags: [dark, light, monospace, blog, responsive]
